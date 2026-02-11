@@ -1,0 +1,26 @@
+{
+    "allowTaskPreemption": false,
+    "constraints": {
+        "maxTaskRetryCount": 0,
+        "maxWallClockTime": "P10675199DT2H48M5.4775807S"
+    },
+    "creationTime": "2026-01-15T08:52:51.9263889Z",
+    "eTag": "0xA1C4F9B2D7E6C31",
+    "executionInfo": {
+        "poolId": "high",
+        "startTime": "2026-01-15T08:52:51.9513888Z"
+    },
+    "id": "job-a1f4c9d7b2e6f3a8190c-preprocess",
+    "lastModified": "2026-01-15T08:52:51.9513888Z",
+    "maxParallelTasks": -1,
+    "onAllTasksComplete": "noaction",
+    "onTaskFailure": "noaction",
+    "poolInfo": {
+        "poolId": "high"
+    },
+    "priority": 0,
+    "state": "active",
+    "stateTransitionTime": "2026-01-15T08:52:51.9513888Z",
+    "url": "https://k7qplnzsxwrtuvya.westeurope.batch.azure.com/jobs/job-a1f4c9d7b2e6f3a8190c-preprocess",
+    "usesTaskDependencies": false
+}

@@ -1,0 +1,36 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "cli.py --help",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "azurebatch_cleanup",
+            "args": [
+                "--help",
+            ],
+            "cwd": "${workspaceFolder}/.work",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        },
+                {
+            "name": "cli.py",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "azurebatch_cleanup",
+            "args": [
+                "--age", "30d",
+                // "--empty", "30m",
+                "--task-id-pattern", "^nf-[0-9a-fA-F]{32}$",
+                "--task-nf-workdir", "omics-test/work",
+                "--task-age", "7d",
+                "--dry-run"
+            ],
+            "cwd": "${workspaceFolder}/.work",
+            "env": {
+                "PYTHONPATH": "${workspaceFolder}/src"
+            }
+        }
+    ]
+}

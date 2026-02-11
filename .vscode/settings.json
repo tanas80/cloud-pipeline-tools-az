@@ -1,0 +1,14 @@
+{
+    "airun.settings": {
+        "workspaceId": "22fc249e-1902-4545-a98c-69a4e655581f"
+    },
+    "python.testing.pytestArgs": [
+        "tests"
+    ],
+    "python.testing.unittestEnabled": false,
+    "python.testing.pytestEnabled": true,
+    "cSpell.words": [
+        "azbatch",
+        "timeparse"
+    ]
+}
