@@ -1,0 +1,233 @@
+{
+    "payload": [
+        {
+            "run": {
+                "id": 123,
+                "mask": 15,
+                "owner": "USER_ADMIN",
+                "locked": false,
+                "originalOwner": "USER_ADMIN",
+                "pipelineId": 1,
+                "startDate": "2026-01-10 10:00:00.000",
+                "version": "draft-0000000000000000000000000000000000000000",
+                "endDate": "2026-01-10 10:03:07.000",
+                "status": "STOPPED",
+                "commitStatus": "NOT_COMMITTED",
+                "lastChangeCommitTime": "2026-01-10 10:00:00.010",
+                "dockerImage": "example.azurecr.io/omics/nextflow:latest",
+                "actualDockerImage": "example.azurecr.io/omics/nextflow:latest",
+                "platform": "linux",
+                "cmdTemplate": "bash $SCRIPTS_DIR/start.sh",
+                "actualCmd": "bash $SCRIPTS_DIR/start.sh",
+                "terminating": false,
+                "sensitive": false,
+                "podId": "sample-pipeline-123",
+                "pipelineName": "sample-pipeline",
+                "pipelineRunParameters": [
+                    {
+                        "name": "mode",
+                        "value": "Process sample",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_CAP_SGE",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_CAP_KUBE",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NXF_UUID",
+                        "value": "00000000-0000-0000-0000-000000000000",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_CAP_SLURM",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_CAP_SPARK",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "NXF_ANSI_LOG",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NF_WORKDIR",
+                        "value": "az://example-storage/work",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_CACHEDIR",
+                        "value": "az://example-storage/cache",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_CONTINUE_RUN",
+                        "value": "300",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_CAP_AUTOSCALE",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NF_EXTRA_ARGS",
+                        "value": "-profile azure -c /common/example.config --validate_params false",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_METADATA_CLASS",
+                        "value": "sample_class",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_RUN_ENGINE_TYPE",
+                        "value": "NEXTFLOW",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_SUPPORT_CONTINUE",
+                        "value": "true",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "NXF_CLOUDCACHE_PATH",
+                        "value": "az://example-storage/cache",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_METADATA_CLASS_ID",
+                        "value": "10",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_TRACE_FILE_DIR",
+                        "value": "${ANALYSIS_DIR}",
+                        "type": "string"
+                    },
+                    {
+                        "name": "parser_output_prefix",
+                        "value": "az://example-storage/results/sample",
+                        "type": "path"
+                    },
+                    {
+                        "name": "CP_METADATA_FOLDER_ID",
+                        "value": "30",
+                        "type": "string"
+                    },
+                    {
+                        "name": "genes_mapping_db_path",
+                        "value": "az://example-storage/genomes/genes-mapping/gmapping.parquet",
+                        "type": "path"
+                    },
+                    {
+                        "name": "CP_CAP_CUSTOM_nextflow",
+                        "value": "true",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NF_TASK_LOOKUP_FILE",
+                        "value": "nf_task_lookup.txt",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_CAP_AUTOSCALE_HYBRID",
+                        "value": "false",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NF_EXTRA_OPTION_cache",
+                        "value": "process.cache = 'lenient'",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_METADATA_ENTITY_EXT_ID",
+                        "value": "00000000-0000-0000-0000-000000000000",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_WEBLOG_HANDLER_PORT",
+                        "value": "8080",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_WEBLOG_HANDLER_ENABLED",
+                        "value": "1",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_AUTOGENERATE_PARAMETERS",
+                        "value": "true",
+                        "type": "boolean"
+                    },
+                    {
+                        "name": "CP_NF_WEBLOG_HANDLER_LOG_FILE",
+                        "value": "/var/log/nf_weblog_handler.log",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_SYNC_TO_STORAGE_BATCH_MODE",
+                        "value": "0",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_ENABLE_RUNTIME_DATA_SYNC",
+                        "value": "0",
+                        "type": "string"
+                    },
+                    {
+                        "name": "CP_NF_RUNTIME_DATA_SYNC_PERIOD",
+                        "value": "300",
+                        "type": "string"
+                    }
+                ],
+                "instance": {
+                    "nodeType": "Standard_D2s_v3",
+                    "nodeDisk": 50,
+                    "effectiveNodeDisk": 50,
+                    "nodeIP": "10.0.0.10",
+                    "nodeId": "aks-example-00000000-vmss000000",
+                    "nodeName": "aks-example-00000000-vmss000000",
+                    "nodePlatform": "linux",
+                    "spot": false,
+                    "cloudRegionId": 1,
+                    "cloudProvider": "AZURE",
+                    "poolId": 0
+                },
+                "timeout": 0,
+                "podIP": "172.16.0.5",
+                "configName": "default",
+                "nodeCount": 0,
+                "configurationId": 0,
+                "podStatus": "NodeLost",
+                "prolongedAtTime": "2026-01-10 10:00:00.000",
+                "executionPreferences": {
+                    "environment": "CLOUD_PLATFORM"
+                },
+                "pricePerHour": 0.45,
+                "computePricePerHour": 0.45000,
+                "diskPricePerHour": 0.00000,
+                "nonPause": false,
+                "aclClass": "PIPELINE",
+                "kubeServiceEnabled": false,
+                "clusterRun": false,
+                "taskName": "sample-pipeline",
+                "masterRun": false,
+                "workerRun": false
+            },
+            "engineTaskKeys": [
+                "ab/123abc"
+            ]
+        }
+    ],
+    "status": "OK"
+}

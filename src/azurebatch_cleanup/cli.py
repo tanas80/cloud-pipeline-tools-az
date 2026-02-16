@@ -3,7 +3,8 @@ from __future__ import annotations
 import argparse
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Optional
+import ssl
+from typing import Iterable, Optional
 
 from pytimeparse.timeparse import timeparse
 
@@ -13,6 +14,7 @@ from .io import ConsoleIO
 from .logging_utils import configure_logging
 from .criteria import CleanupJobCriteria
 from .core import run_cleanup
+from . import cp_api
 
 
 def parseDuration(interval_str: str) -> timedelta:
@@ -48,15 +50,17 @@ class CliOptions:
     task_id_pattern: Optional[str]
     task_nf_workdir: Optional[str]
     task_age: Optional[timedelta]
+    task_run_completed: Optional[timedelta]
 
     dry_run: bool
     yes: bool
     ignore_errors: bool
 
     log_level: Optional[str]
+    insecure: bool
 
 
-def _build_parser(argv: Optional[list[str]] = None) -> CliOptions:
+def _build_parser() -> CliOptions:
     parser = argparse.ArgumentParser(
         description="Delete Azure Batch jobs that are not completed and match criteria."
     )
@@ -83,6 +87,11 @@ def _build_parser(argv: Optional[list[str]] = None) -> CliOptions:
              "older than specified time (based on lastModified of job)")
 
     parser.add_argument(
+        "--task-run-completed", type=parseDuration, default=None,
+        help="delete jobs where all tasks belong to runs with completed status via CP API"
+             "older than specified time (based on lastModified of job)")
+
+    parser.add_argument(
         "--dry-run", action="store_true",
         help="only show jobs to delete")
     parser.add_argument(
@@ -95,11 +104,14 @@ def _build_parser(argv: Optional[list[str]] = None) -> CliOptions:
     parser.add_argument(
         "--log-level", type=str, default="WARNING",
         help="logging level (DEBUG, INFO, WARNING, ERROR)")
-    args = parser.parse_args(argv)
+    parser.add_argument(
+        "--insecure", action="store_true",
+        help="disable SSL certificate verification")
+    args = parser.parse_args()
 
-    if args.empty is None and args.age is None and not args.task_id_pattern:
+    if args.empty is None and args.age is None and not args.task_id_pattern and args.task_run_completed is None:
         parser.error(
-            "at least one filter must be set: --empty, --age, or --task-id-pattern")
+            "at least one filter must be set: --empty, --age, --task-id-pattern, or --task-run-completed")
 
     if (args.task_id_pattern is not None or args.task_nf_workdir is not None) and args.task_age is None:
         parser.error(
@@ -108,29 +120,43 @@ def _build_parser(argv: Optional[list[str]] = None) -> CliOptions:
     return CliOptions(**vars(args))
 
 
-def main(argv: Optional[list[str]] = None) -> int:
-    options = _build_parser(argv)
-
-    configure_logging(options.log_level)
+def main() -> int:
     load_env()
+    opts = _build_parser()
+
+    configure_logging(opts.log_level)
 
     criteria = CleanupJobCriteria(
-        age=options.age,
-        empty=options.empty,
-        task_id_pattern=options.task_id_pattern,
-        task_age=options.task_age,
-        task_nf_workdir=options.task_nf_workdir,
+        age=opts.age,
+        empty=opts.empty,
+        task_id_pattern=opts.task_id_pattern,
+        task_age=opts.task_age,
+        task_nf_workdir=opts.task_nf_workdir,
+        task_run_completed=opts.task_run_completed,
     )
+
+    ssl_context = None
+    if opts.insecure:
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+
+    def _get_tasks_run_info(task_id_list: Iterable[str]) -> cp_api.CpApiTaskRunInfoResponse:
+        return cp_api.get_tasks_run_info(
+            task_id_list,
+            ssl_context=ssl_context,
+        )
 
     io = ConsoleIO()
     return run_cleanup(
         az_cli.list_non_complete_jobs,
         az_cli.list_tasks,
+        _get_tasks_run_info,
         az_cli.delete_job,
         criteria,
-        dry_run=options.dry_run,
-        assume_yes=options.yes,
-        ignore_errors=options.ignore_errors,
+        dry_run=opts.dry_run,
+        assume_yes=opts.yes,
+        ignore_errors=opts.ignore_errors,
         io=io,
         now=datetime.now(tz=timezone.utc)
     )

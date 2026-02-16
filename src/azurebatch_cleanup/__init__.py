@@ -5,5 +5,6 @@ __all__ = [
     "criteria",
     "core",
     "az_cli",
+    "cp_api",
     "env",
 ]

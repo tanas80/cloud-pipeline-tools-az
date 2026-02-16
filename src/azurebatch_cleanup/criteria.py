@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 from datetime import datetime, timedelta, timezone
-from typing import Iterable, List, Optional
+from typing import Dict, Iterable, List, Optional
 
 from .models import JobModel, TaskModel, ensure_utc
 
@@ -20,6 +20,7 @@ class CleanupJobCriteria:
     age: Optional[timedelta]
     empty: Optional[timedelta]
     task: Optional[CleanupTaskCriteria]
+    task_run_completed: Optional[timedelta]
 
     def __init__(
         self,
@@ -29,6 +30,7 @@ class CleanupJobCriteria:
         task_id_pattern: Optional[str] = None,
         task_nf_workdir: Optional[str] = None,
         task_age: Optional[timedelta] = None,
+        task_run_completed: Optional[timedelta] = None,
     ) -> None:
         object.__setattr__(self, "age", age)
         object.__setattr__(self, "empty", empty)
@@ -45,28 +47,14 @@ class CleanupJobCriteria:
         else:
             object.__setattr__(self, "task", None)
 
+        object.__setattr__(self, "task_run_completed",
+                           task_run_completed)
+
 
 @dataclass(frozen=True)
 class Decision:
     can_delete: bool
     reasons: List[str]
-
-
-def _format_duration(delta: timedelta) -> str:
-    parts: List[str] = []
-    total_seconds = int(delta.total_seconds())
-    days, remainder = divmod(total_seconds, 24 * 60 * 60)
-    hours, remainder = divmod(remainder, 60 * 60)
-    minutes, seconds = divmod(remainder, 60)
-    if days:
-        parts.append(f"{days}d")
-    if hours:
-        parts.append(f"{hours}h")
-    if minutes:
-        parts.append(f"{minutes}m")
-    if seconds:
-        parts.append(f"{seconds}s")
-    return "".join(parts) if parts else "0s"
 
 
 def _matches_age(job: JobModel, age: timedelta, now: datetime) -> bool:
@@ -126,11 +114,33 @@ def _matches_every_task(
     return task_id_pattern_match and nf_workdir_match and age_match
 
 
+def _matches_task_run_completed(
+    job: JobModel,
+    tasks: Iterable[TaskModel],
+    age: timedelta,
+    now: datetime,
+    task_run_info: Optional[Dict[str, bool]],
+) -> bool:
+    if not _matches_age(job, age, now):
+        return False
+
+    task_list = list(tasks)
+    if not task_list or not task_run_info:
+        return False
+
+    for task in task_list:
+        if task_run_info.get(task.id) is not True:
+            return False
+
+    return True
+
+
 def evaluate_job(
     job: JobModel,
     tasks: List[TaskModel],
     criteria: CleanupJobCriteria,
     now: datetime,
+    task_run_completed: Optional[Dict[str, bool]] | None = None,
 ) -> Decision:
     reasons: List[str] = []
 
@@ -148,7 +158,15 @@ def evaluate_job(
     if (criteria.task is not None):
         match_task = _matches_every_task(job, tasks, criteria.task, now)
 
-    match_res = match_age or match_empty or match_task
+    # Match --task-run-completed
+    match_task_run_completed = False
+    if criteria.task_run_completed is not None:
+        match_task_run_completed = _matches_task_run_completed(
+            job, tasks, criteria.task_run_completed, now,
+            task_run_completed,
+        )
+
+    match_res = match_age or match_empty or match_task or match_task_run_completed
 
     if match_res:
         if criteria.age is not None and match_age:
@@ -159,6 +177,9 @@ def evaluate_job(
 
         if criteria.task is not None and match_task:
             reasons.append("task")
+
+        if criteria.task_run_completed is not None and match_task_run_completed:
+            reasons.append("task-run-completed")
 
         if not reasons:
             raise ValueError("Unexpected criteria")

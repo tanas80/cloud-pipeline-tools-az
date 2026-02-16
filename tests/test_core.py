@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
-from typing import List
+from typing import Iterable, List, Optional
 
+from azurebatch_cleanup import cp_api
 from azurebatch_cleanup.core import run_cleanup
 from azurebatch_cleanup.io import ConsoleIO
 from azurebatch_cleanup.criteria import CleanupJobCriteria
@@ -33,6 +34,9 @@ def test_core__dry_run_only_prints() -> None:
     def list_tasks(job_id: str):
         return tasks
 
+    def get_tasks_run_info(task_id_list: Iterable[str]) -> cp_api.CpApiTaskRunInfoResponse:
+        return cp_api.CpApiTaskRunInfoResponse({})
+
     deleted: List[str] = []
 
     def delete_job(job_id: str) -> None:
@@ -46,6 +50,7 @@ def test_core__dry_run_only_prints() -> None:
     code = run_cleanup(
         list_jobs,
         list_tasks,
+        get_tasks_run_info,
         delete_job,
         criteria,
         dry_run=True,
@@ -69,6 +74,9 @@ def test_core__confirm_and_delete() -> None:
     def list_tasks(job_id: str):
         return []
 
+    def get_tasks_run_info(task_id_list: Iterable[str]) -> cp_api.CpApiTaskRunInfoResponse:
+        return cp_api.CpApiTaskRunInfoResponse({})
+
     deleted: List[str] = []
 
     def delete_job(job_id: str) -> None:
@@ -82,6 +90,7 @@ def test_core__confirm_and_delete() -> None:
     code = run_cleanup(
         list_jobs,
         list_tasks,
+        get_tasks_run_info,
         delete_job,
         criteria,
         dry_run=False,

@@ -1,1 +1,0 @@
-Read instructions from '.vscode/prompts/init.md' and follow them when generating code.
